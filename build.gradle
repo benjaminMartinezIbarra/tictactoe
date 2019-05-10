@@ -17,6 +17,7 @@ repositories {
 dependencies {
     compile 'org.jongo:jongo:1.1'
     compile 'org.mongodb:mongo-java-driver:2.+'
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-all:1.+'
+    testCompile group: 'org.mockito', name: 'mockito-core', version: '2.27.0'
+    testCompile 'junit:junit:4.11'
+
 } 
