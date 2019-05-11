@@ -1,5 +1,10 @@
 package com.packtpublishing.tddjava.ch03tictactoe;
 
+import com.packtpublishing.tddjava.ch03tictactoe.mongo.TiTacToeRepository;
+import com.packtpublishing.tddjava.ch03tictactoe.mongo.TicTacToeBean;
+
+import java.net.UnknownHostException;
+
 /**
  * @author benjaminmartinez
  * Date: 2019-04-25
@@ -12,13 +17,23 @@ public abstract class TicTacToe<C> {
 
     public static final String PLAYER_1 = "player1";
     public static final String PLAYER_2 = "player2";
+    private TiTacToeRepository repository;
+    private int turn;
 
-    public TicTacToe(int dimension) {
+    public TicTacToe(int dimension) throws UnknownHostException {
         board = new GameBoard(dimension);
         board.addObserver(getPlayersStatusWatcher());
         board.addObserver(getBoardFullWatcher());
         currentPlayer = PLAYER_1;
         status = "started";
+        repository = new TiTacToeRepository();
+        turn = 1;
+
+    }
+
+    public TicTacToe(int dimension, TiTacToeRepository repository) throws UnknownHostException{
+        this(dimension);
+        this.repository = repository;
 
     }
 
@@ -27,7 +42,7 @@ public abstract class TicTacToe<C> {
     }
 
     private BoardValueAddedObserver getPlayersStatusWatcher() {
-        return new BoardValueAddedObserver(this) ;
+        return new BoardValueAddedObserver(this);
     }
 
     protected abstract boolean isWinning(final PlaySet<C> completed);
@@ -40,26 +55,32 @@ public abstract class TicTacToe<C> {
         status = "draw";
     }
 
-    public void play(int x, int y, final C value) {
-        beforeVerifyPlacement(x, y, value);
-        verifyPlacement(x, y);
+    public void play(int x, int y, C value) {
+        play(new TicTacToeBean(turn, x, y, currentPlayer, value));
+    }
 
-        board.put(new Position(x, y), value, currentPlayer);
+    public void play(TicTacToeBean<C> bean) {
+        beforeVerifyPlacement(bean);
+        verifyPlacement(bean.getX(), bean.getY());
 
-        afterVerifyPlacement(x, y, value);
+        board.put(new Position(bean.getX(), bean.getY()), bean.getValue(), currentPlayer);
+
+        afterVerifyPlacement(bean);
 
         if (!gamefinished()) {
             swapPlayer();
+            turn++;
         }
     }
 
-    protected void afterVerifyPlacement(final int x, final int y, final C value) {
+    protected abstract void beforeVerifyPlacement(final TicTacToeBean<C> bean);
 
+    protected void afterVerifyPlacement(TicTacToeBean<C> bean) {
+        if (!repository.saveMove(bean)){
+            throw new RuntimeException("Error while saving player move");
+        }
     }
 
-    protected void beforeVerifyPlacement(final int x, final int y, final C value) {
-
-    }
 
     private void verifyPlacement(final int x, final int y) {
 

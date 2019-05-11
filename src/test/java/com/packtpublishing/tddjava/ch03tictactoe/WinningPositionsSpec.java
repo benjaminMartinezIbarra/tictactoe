@@ -1,8 +1,15 @@
 package com.packtpublishing.tddjava.ch03tictactoe;
 
+import com.packtpublishing.tddjava.ch03tictactoe.mongo.TiTacToeRepository;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.net.UnknownHostException;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 /**
  * @author benjaminmartinez
@@ -11,11 +18,16 @@ import org.junit.Test;
 public class WinningPositionsSpec {
 
     private TicTacToeBasic game;
+    private TiTacToeRepository tiTacToeRepository;
 
 
     @Before
-    public void setup(){
-        game = new TicTacToeBasic();
+    public void setup() throws UnknownHostException {
+
+
+        tiTacToeRepository = mock(TiTacToeRepository.class);
+        game = new TicTacToeBasic(tiTacToeRepository);
+        doReturn(true).when(tiTacToeRepository).saveMove(any());
     }
 
     @Test

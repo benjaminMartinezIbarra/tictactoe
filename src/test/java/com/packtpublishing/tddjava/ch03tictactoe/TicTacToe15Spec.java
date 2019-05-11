@@ -6,6 +6,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.net.UnknownHostException;
+
 /**
  * @author benjaminmartinez
  * Date: 2019-04-25
@@ -19,7 +21,7 @@ public class TicTacToe15Spec {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Before
-    public void setup(){
+    public void setup() throws UnknownHostException {
         game = new TicTacToe15(3);
     }
 

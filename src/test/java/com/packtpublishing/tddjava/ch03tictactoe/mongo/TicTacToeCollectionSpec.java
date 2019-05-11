@@ -25,14 +25,14 @@ import static org.mockito.Mockito.verify;
 public class TicTacToeCollectionSpec {
 
     TiTacToeRepository tiTacToeRepository;
-    TicTacToeBean bean;
+    TicTacToeBean<String> bean;
     MongoCollection mongoCollection;
 
     @Before
     public void setup() throws UnknownHostException {
         tiTacToeRepository = spy(new TiTacToeRepository());
         mongoCollection = mock(MongoCollection.class);
-        bean = new TicTacToeBean(3, 2, 1, 'Y');
+        bean = new TicTacToeBean(3, 2, 1, "Player1","Test");
     }
 
     @Test

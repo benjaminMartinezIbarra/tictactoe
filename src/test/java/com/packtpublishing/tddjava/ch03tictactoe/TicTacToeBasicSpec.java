@@ -1,11 +1,19 @@
 package com.packtpublishing.tddjava.ch03tictactoe;
 
+import com.packtpublishing.tddjava.ch03tictactoe.mongo.TiTacToeRepository;
+import com.packtpublishing.tddjava.ch03tictactoe.mongo.TicTacToeBean;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.net.UnknownHostException;
+
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /**
  * @author benjaminmartinez
@@ -17,35 +25,39 @@ public class TicTacToeBasicSpec {
     public ExpectedException exception = ExpectedException.none();
 
     private TicTacToeBasic game;
+    private TiTacToeRepository tiTacToeRepository;
 
     @Before
-    public void setup() {
-        game = new TicTacToeBasic();
-    }
+    public void setup() throws UnknownHostException {
 
+        tiTacToeRepository = mock(TiTacToeRepository.class);
+        doReturn(true).when(tiTacToeRepository).saveMove(any());
+        game = new TicTacToeBasic(tiTacToeRepository);
+
+    }
 
     @Test
-    public void whenGameIsStartedPlayerOneIsFirst(){
+    public void whenGameIsStartedPlayerOneIsFirst() {
         assertEquals("player1", game.getCurrentPlayer());
     }
-
 
     //If the last turn was played by X, then the next turn should be played by O
 
     @Test
-    public void whenLastTurnPlayerXThenNextTurnPlayer0(){
-        game.play(1,1);
+    public void whenLastTurnPlayerXThenNextTurnPlayer0() {
+        game.play(1, 1);
         assertEquals("player2", game.getCurrentPlayer());
 
     }
 
     @Test
-    public void whenLastTurnPlayer2ThenNextTurnPlayer1(){
-        game.play(1,1);
-        game.play(2,1);
+    public void whenLastTurnPlayer2ThenNextTurnPlayer1() {
+        game.play(1, 1);
+        game.play(2, 1);
         assertEquals("player1", game.getCurrentPlayer());
 
     }
+
     @Test
     public void whenPieceisPlacedOutsideMaxXAxis() {
         exception.expect(RuntimeException.class);
@@ -96,5 +108,29 @@ public class TicTacToeBasicSpec {
         exception.expectMessage("Position is already taken (1,1)");
         game.play(1, 1);
 
+    }
+
+    @Test
+    public void whenDiscIsPlayedThenMoveIsSaved() {
+        TicTacToeBean bean = new TicTacToeBean(1, 1, 1, "player1", 'O');
+        game.play(bean.getX(), bean.getY());
+
+        verify(tiTacToeRepository).saveMove(bean);
+    }
+
+    @Test
+    public void whenPlayAndSaveReturnsFalseThenThrowException() {
+
+        TicTacToeBean bean = new TicTacToeBean(1, 1, 1, "player1", 'O');
+        doReturn(false).when(tiTacToeRepository).saveMove(bean);
+        exception.expectMessage("Error while saving player move");
+        game.play(bean.getX(), bean.getY());
+    }
+
+    @Test
+    public void whenPlayInvokedMultipleTimesThenTurnIncreases() {
+        game.play(1, 1);
+        game.play(2, 2);
+        verify(tiTacToeRepository).saveMove(new TicTacToeBean(2, 2, 2, "player2", 'X'));
     }
 }

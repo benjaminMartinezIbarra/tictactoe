@@ -1,5 +1,9 @@
 package com.packtpublishing.tddjava.ch03tictactoe;
 
+import com.packtpublishing.tddjava.ch03tictactoe.mongo.TicTacToeBean;
+
+import java.net.UnknownHostException;
+
 /**
  * @author benjaminmartinez
  * Date: 2019-04-25
@@ -8,7 +12,7 @@ public class TicTacToe15 extends TicTacToe<Integer> {
 
     boolean[] possibleValues = {false, false, false, false, false, false, false, false, false};
 
-    public TicTacToe15(final int dimension) {
+    public TicTacToe15(final int dimension) throws UnknownHostException {
         super(dimension);
     }
 
@@ -22,15 +26,15 @@ public class TicTacToe15 extends TicTacToe<Integer> {
     }
 
     @Override
-    protected void beforeVerifyPlacement(int x, int y, Integer value) {
-        verifyRangeValue(value);
-        verifyValueAlreadyTaken(value);
+    protected void beforeVerifyPlacement(TicTacToeBean<Integer> bean) {
+        verifyRangeValue(bean.getValue());
+        verifyValueAlreadyTaken(bean.getValue());
 
     }
 
     @Override
-    protected void afterVerifyPlacement(int x, int y, Integer value) {
-        possibleValues[value.intValue() - 1] = true;
+    protected void afterVerifyPlacement(TicTacToeBean<Integer> bean) {
+        possibleValues[bean.getValue().intValue() - 1] = true;
     }
 
     private void verifyRangeValue(final Integer value) {
