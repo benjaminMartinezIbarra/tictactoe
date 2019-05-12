@@ -1,5 +1,6 @@
 package com.packtpublishing.tddjava.ch03tictactoe;
 
+import com.packtpublishing.tddjava.ch03tictactoe.mongo.TiTacToeRepository;
 import com.packtpublishing.tddjava.ch03tictactoe.mongo.TicTacToeBean;
 
 import java.net.UnknownHostException;
@@ -12,8 +13,8 @@ public class TicTacToe15 extends TicTacToe<Integer> {
 
     boolean[] possibleValues = {false, false, false, false, false, false, false, false, false};
 
-    public TicTacToe15(final int dimension) throws UnknownHostException {
-        super(dimension);
+    public TicTacToe15(final int dimension, TiTacToeRepository repository) throws UnknownHostException {
+        super(dimension, repository);
     }
 
     @Override

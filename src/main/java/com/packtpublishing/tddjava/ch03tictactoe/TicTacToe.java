@@ -3,8 +3,6 @@ package com.packtpublishing.tddjava.ch03tictactoe;
 import com.packtpublishing.tddjava.ch03tictactoe.mongo.TiTacToeRepository;
 import com.packtpublishing.tddjava.ch03tictactoe.mongo.TicTacToeBean;
 
-import java.net.UnknownHostException;
-
 /**
  * @author benjaminmartinez
  * Date: 2019-04-25
@@ -20,21 +18,22 @@ public abstract class TicTacToe<C> {
     private TiTacToeRepository repository;
     private int turn;
 
-    public TicTacToe(int dimension) throws UnknownHostException {
+    public TicTacToe(int dimension, TiTacToeRepository repository) {
         board = new GameBoard(dimension);
         board.addObserver(getPlayersStatusWatcher());
         board.addObserver(getBoardFullWatcher());
+        this.repository = repository;
+        turn = 1;
         currentPlayer = PLAYER_1;
         status = "started";
-        repository = new TiTacToeRepository();
-        turn = 1;
+        onGameStart();
 
     }
 
-    public TicTacToe(int dimension, TiTacToeRepository repository) throws UnknownHostException{
-        this(dimension);
-        this.repository = repository;
-
+    private void onGameStart() {
+        if (!repository.drop()) {
+            throw new RuntimeException("Error dropping Last Game data");
+        }
     }
 
     private TicTacToeBoardFullObserver getBoardFullWatcher() {
@@ -61,9 +60,10 @@ public abstract class TicTacToe<C> {
 
     public void play(TicTacToeBean<C> bean) {
         beforeVerifyPlacement(bean);
-        verifyPlacement(bean.getX(), bean.getY());
 
+        verifyPlacement(bean.getX(), bean.getY());
         board.put(new Position(bean.getX(), bean.getY()), bean.getValue(), currentPlayer);
+        saveMove(bean);
 
         afterVerifyPlacement(bean);
 
@@ -73,14 +73,15 @@ public abstract class TicTacToe<C> {
         }
     }
 
-    protected abstract void beforeVerifyPlacement(final TicTacToeBean<C> bean);
-
-    protected void afterVerifyPlacement(TicTacToeBean<C> bean) {
-        if (!repository.saveMove(bean)){
+    private void saveMove(final TicTacToeBean<C> bean) {
+        if (!repository.saveMove(bean)) {
             throw new RuntimeException("Error while saving player move");
         }
     }
 
+    protected abstract void beforeVerifyPlacement(final TicTacToeBean<C> bean);
+
+    protected abstract void afterVerifyPlacement(TicTacToeBean<C> bean);
 
     private void verifyPlacement(final int x, final int y) {
 

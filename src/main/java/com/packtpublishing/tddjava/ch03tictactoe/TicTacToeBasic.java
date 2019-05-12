@@ -26,6 +26,11 @@ public class TicTacToeBasic extends TicTacToe {
         
     }
 
+    @Override
+    protected void afterVerifyPlacement(final TicTacToeBean bean) {
+
+    }
+
     public TicTacToeBasic() throws UnknownHostException {
         this(3, new TiTacToeRepository());
     }

@@ -32,6 +32,7 @@ public class TicTacToeBasicSpec {
 
         tiTacToeRepository = mock(TiTacToeRepository.class);
         doReturn(true).when(tiTacToeRepository).saveMove(any());
+        doReturn(true).when(tiTacToeRepository).drop();
         game = new TicTacToeBasic(tiTacToeRepository);
 
     }
@@ -125,6 +126,20 @@ public class TicTacToeBasicSpec {
         doReturn(false).when(tiTacToeRepository).saveMove(bean);
         exception.expectMessage("Error while saving player move");
         game.play(bean.getX(), bean.getY());
+    }
+
+    @Test
+    public void whenGameIsStartedThenDBIsDropped(){
+        verify(tiTacToeRepository).drop();
+    }
+
+    @Test
+    public void whenGameIsStartedThenIfDBIsNotDroppedThenReturnException() throws UnknownHostException {
+
+        doReturn(false).when(tiTacToeRepository).drop();
+        exception.expect(RuntimeException.class);
+        new TicTacToeBasic(tiTacToeRepository);
+        verify(tiTacToeRepository).drop();
     }
 
     @Test

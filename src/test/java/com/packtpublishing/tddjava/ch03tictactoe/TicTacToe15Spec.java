@@ -1,5 +1,6 @@
 package com.packtpublishing.tddjava.ch03tictactoe;
 
+import com.packtpublishing.tddjava.ch03tictactoe.mongo.TiTacToeRepository;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -7,6 +8,8 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.net.UnknownHostException;
+
+import static org.mockito.Mockito.mock;
 
 /**
  * @author benjaminmartinez
@@ -16,13 +19,15 @@ public class TicTacToe15Spec {
 
 
     TicTacToe15 game;
+    TiTacToeRepository repository;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setup() throws UnknownHostException {
-        game = new TicTacToe15(3);
+        repository = mock(TiTacToeRepository.class);
+        game = new TicTacToe15(3, repository);
     }
 
     @Test
