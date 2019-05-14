@@ -3,6 +3,8 @@ package com.packtpublishing.tddjava.ch03tictactoe;
 import com.packtpublishing.tddjava.ch03tictactoe.mongo.TiTacToeRepository;
 import com.packtpublishing.tddjava.ch03tictactoe.mongo.TicTacToeBean;
 
+import java.net.UnknownHostException;
+
 /**
  * @author benjaminmartinez
  * Date: 2019-04-25

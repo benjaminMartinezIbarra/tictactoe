@@ -14,6 +14,15 @@ repositories {
     mavenCentral()
 }
 
+test {
+    include '**/*Spec.class'
+}
+
+task testInteg(type: Test) {
+    include '**/*Integration.class'
+}
+
+
 dependencies {
     compile 'org.jongo:jongo:1.1'
     compile 'org.mongodb:mongo-java-driver:2.+'

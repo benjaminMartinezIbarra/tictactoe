@@ -1,6 +1,7 @@
 package com.packtpublishing.tddjava.ch03tictactoe;
 
 import com.packtpublishing.tddjava.ch03tictactoe.mongo.TiTacToeRepository;
+import com.packtpublishing.tddjava.ch03tictactoe.mongo.TicTacToeBean;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,11 +24,10 @@ public class WinningPositionsSpec {
 
     @Before
     public void setup() throws UnknownHostException {
-
-
         tiTacToeRepository = mock(TiTacToeRepository.class);
+        doReturn(true).when(tiTacToeRepository).drop();
+        doReturn(true).when(tiTacToeRepository).saveMove(any(TicTacToeBean.class));
         game = new TicTacToeBasic(tiTacToeRepository);
-        doReturn(true).when(tiTacToeRepository).saveMove(any());
     }
 
     @Test
